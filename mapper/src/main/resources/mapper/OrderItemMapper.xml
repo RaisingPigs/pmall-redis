@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.pan.pmall.dao.OrderItemMapper">
+
+    <resultMap id="BaseResultMap" type="com.pan.pmall.entity.OrderItem">
+        <id property="itemId" column="item_id" jdbcType="VARCHAR"/>
+        <result property="orderId" column="order_id" jdbcType="VARCHAR"/>
+        <result property="productId" column="product_id" jdbcType="VARCHAR"/>
+        <result property="productName" column="product_name" jdbcType="VARCHAR"/>
+        <result property="skuId" column="sku_id" jdbcType="VARCHAR"/>
+        <result property="skuName" column="sku_name" jdbcType="VARCHAR"/>
+        <result property="skuImg" column="sku_img" jdbcType="VARCHAR"/>
+        <result property="skuAttr" column="sku_attr" jdbcType="VARCHAR"/>
+        <result property="productPrice" column="product_price" jdbcType="DECIMAL"/>
+        <result property="buyCounts" column="buy_counts" jdbcType="INTEGER"/>
+        <result property="totalAmount" column="total_amount" jdbcType="DECIMAL"/>
+        <result property="basketDate" column="basket_date" jdbcType="TIMESTAMP"/>
+        <result property="buyTime" column="buy_time" jdbcType="TIMESTAMP"/>
+        <result property="isComment" column="is_comment" jdbcType="INTEGER"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        item_id,order_id,product_id,
+        product_name,sku_id,
+        sku_name,sku_img,sku_attr,product_price,buy_counts,
+        total_amount,basket_date,buy_time,
+        is_comment
+    </sql>
+
+    <select id="selectOrderItemsByOrderId" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from order_item
+        where order_id = #{orderId}
+    </select>
+</mapper>

@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.pan.pmall.dao.IndexImgMapper">
+
+    <resultMap id="BaseResultMap" type="com.pan.pmall.entity.IndexImg">
+        <id property="imgId" column="img_id" jdbcType="VARCHAR"/>
+        <result property="imgUrl" column="img_url" jdbcType="VARCHAR"/>
+        <result property="imgBgColor" column="img_bg_color" jdbcType="VARCHAR"/>
+        <result property="prodId" column="prod_id" jdbcType="VARCHAR"/>
+        <result property="categoryId" column="category_id" jdbcType="VARCHAR"/>
+        <result property="indexType" column="index_type" jdbcType="INTEGER"/>
+        <result property="seq" column="seq" jdbcType="INTEGER"/>
+        <result property="status" column="status" jdbcType="INTEGER"/>
+        <result property="createTime" column="create_time" jdbcType="TIMESTAMP"/>
+        <result property="updateTime" column="update_time" jdbcType="TIMESTAMP"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        img_id,img_url,img_bg_color,
+        prod_id,category_id,index_type,
+        seq,status,create_time,
+        update_time
+    </sql>
+
+    <select id="selectIndexImgs" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from index_img
+        where status = 1
+        order by seq
+    </select>
+</mapper>

@@ -1,0 +1,142 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.pan.pmall.dao.CategoryMapper">
+
+    <resultMap id="BaseResultMap" type="com.pan.pmall.entity.Category">
+        <id property="categoryId" column="category_id" jdbcType="VARCHAR"/>
+        <result property="categoryName" column="category_name" jdbcType="VARCHAR"/>
+        <result property="categoryLevel" column="category_level" jdbcType="INTEGER"/>
+        <result property="parentId" column="parent_id" jdbcType="VARCHAR"/>
+        <result property="categoryIcon" column="category_icon" jdbcType="VARCHAR"/>
+        <result property="categorySlogan" column="category_slogan" jdbcType="VARCHAR"/>
+        <result property="categoryPic" column="category_pic" jdbcType="VARCHAR"/>
+        <result property="categoryBgColor" column="category_bg_color" jdbcType="VARCHAR"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        category_id,category_name,category_level,
+        parent_id,category_icon,category_slogan,
+        category_pic,category_bg_color
+    </sql>
+
+
+    <!--连接查询获取子分类-->
+    <resultMap id="CategoryWithChildrenMap1" type="com.pan.pmall.pojo.CategoryVo">
+        <id property="categoryId" column="category_id_2" jdbcType="VARCHAR"/>
+        <result property="categoryName" column="category_name_2" jdbcType="VARCHAR"/>
+        <result property="categoryLevel" column="category_level_2" jdbcType="INTEGER"/>
+        <result property="parentId" column="parent_id_2" jdbcType="VARCHAR"/>
+        <result property="categoryIcon" column="category_icon_2" jdbcType="VARCHAR"/>
+        <result property="categorySlogan" column="category_slogan_2" jdbcType="VARCHAR"/>
+        <result property="categoryPic" column="category_pic_2" jdbcType="VARCHAR"/>
+        <result property="categoryBgColor" column="category_bg_color_2" jdbcType="VARCHAR"/>
+
+        <collection property="categories" ofType="com.pan.pmall.pojo.CategoryVo">
+            <id property="categoryId" column="category_id_3" jdbcType="VARCHAR"/>
+            <result property="categoryName" column="category_name_3" jdbcType="VARCHAR"/>
+            <result property="categoryLevel" column="category_level_3" jdbcType="INTEGER"/>
+            <result property="parentId" column="parent_id_3" jdbcType="VARCHAR"/>
+            <result property="categoryIcon" column="category_icon_3" jdbcType="VARCHAR"/>
+            <result property="categorySlogan" column="category_slogan_3" jdbcType="VARCHAR"/>
+            <result property="categoryPic" column="category_pic_3" jdbcType="VARCHAR"/>
+            <result property="categoryBgColor" column="category_bg_color_3" jdbcType="VARCHAR"/>
+        </collection>
+    </resultMap>
+
+    <select id="selectChildrenByCategoryId1" resultMap="CategoryWithChildrenMap1">
+        select c2.category_id       category_id_2,
+               c2.category_name     category_name_2,
+               c2.category_level    category_level_2,
+               c2.parent_id         parent_id_2,
+               c2.category_icon     category_icon_2,
+               c2.category_slogan   category_slogan_2,
+               c2.category_pic      category_pic_2,
+               c2.category_bg_color category_bg_color_2,
+               c3.category_id       category_id_3,
+               c3.category_name     category_name_3,
+               c3.category_level    category_level_3,
+               c3.parent_id         parent_id_3,
+               c3.category_icon     category_icon_3,
+               c3.category_slogan   category_slogan_3,
+               c3.category_pic      category_pic_3,
+               c3.category_bg_color category_bg_color_3
+        from category c2
+                 left join category c3 on c2.category_id = c3.parent_id
+        where c2.parent_id = #{categoryId};
+    </select>
+
+
+    <!--子查询获取子分类-->
+    <resultMap id="CategoryWithChildrenMap2" type="com.pan.pmall.pojo.CategoryVo">
+        <id property="categoryId" column="category_id" jdbcType="VARCHAR"/>
+        <result property="categoryName" column="category_name" jdbcType="VARCHAR"/>
+        <result property="categoryLevel" column="category_level" jdbcType="INTEGER"/>
+        <result property="parentId" column="parent_id" jdbcType="VARCHAR"/>
+        <result property="categoryIcon" column="category_icon" jdbcType="VARCHAR"/>
+        <result property="categorySlogan" column="category_slogan" jdbcType="VARCHAR"/>
+        <result property="categoryPic" column="category_pic" jdbcType="VARCHAR"/>
+        <result property="categoryBgColor" column="category_bg_color" jdbcType="VARCHAR"/>
+
+        <!--注意: 此处的select要写全类名.方法名-->
+        <collection property="categories" select="com.pan.pmall.dao.CategoryMapper.selectChildrenByCategoryId2"
+                    column="category_id"/>
+    </resultMap>
+
+    <select id="selectChildrenByCategoryId2" resultMap="CategoryWithChildrenMap2">
+        select
+        <include refid="Base_Column_List"/>
+        from category
+        where parent_id= #{categoryId}
+    </select>
+
+    <!--根据一级分类id查询该分类下商品销量前几位的商品及商品图片-->
+    <resultMap id="CategoryMapWithProductVOMap" type="com.pan.pmall.pojo.CategoryVo">
+        <id property="categoryId" column="category_id" jdbcType="VARCHAR"/>
+        <result property="categoryName" column="category_name" jdbcType="VARCHAR"/>
+        <result property="categoryLevel" column="category_level" jdbcType="INTEGER"/>
+        <result property="parentId" column="parent_id" jdbcType="VARCHAR"/>
+        <result property="categoryIcon" column="category_icon" jdbcType="VARCHAR"/>
+        <result property="categorySlogan" column="category_slogan" jdbcType="VARCHAR"/>
+        <result property="categoryPic" column="category_pic" jdbcType="VARCHAR"/>
+        <result property="categoryBgColor" column="category_bg_color" jdbcType="VARCHAR"/>
+
+        <!--将父查询的参数传递给子查询-->
+        <collection property="products"
+                    select="com.pan.pmall.dao.ProductMapper.selectProductsWithImgsByCategoryId"
+                    column="{categoryId=categoryId,start=start,num=num}"/>
+
+        <collection property="categories"
+                    select="com.pan.pmall.dao.CategoryMapper.selectCategoryByParentId"
+                    column="category_id"/>
+    </resultMap>
+
+    <select id="selectOneWithProductVOByCategoryId" resultMap="CategoryMapWithProductVOMap">
+        select ${categoryId} as categoryId, ${start} as start , ${num} as num,
+        <include refid="Base_Column_List"/>
+        from category
+        where category_id = #{categoryId}
+    </select>
+
+    <resultMap id="CategoryVOMap" type="com.pan.pmall.pojo.CategoryVo">
+        <id property="categoryId" column="category_id" jdbcType="VARCHAR"/>
+        <result property="categoryName" column="category_name" jdbcType="VARCHAR"/>
+        <result property="categoryLevel" column="category_level" jdbcType="INTEGER"/>
+        <result property="parentId" column="parent_id" jdbcType="VARCHAR"/>
+        <result property="categoryIcon" column="category_icon" jdbcType="VARCHAR"/>
+        <result property="categorySlogan" column="category_slogan" jdbcType="VARCHAR"/>
+        <result property="categoryPic" column="category_pic" jdbcType="VARCHAR"/>
+        <result property="categoryBgColor" column="category_bg_color" jdbcType="VARCHAR"/>
+    </resultMap>
+
+
+    <select id="selectCategoryByParentId" resultMap="CategoryVOMap">
+        select
+        <include refid="Base_Column_List"/>
+        from category
+        where parent_id in
+        (select category_id from category where parent_id = #{categoryId})
+        limit 0,6
+    </select>
+</mapper>

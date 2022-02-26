@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.pan.pmall.dao.ProductCommentMapper">
+
+    <resultMap id="BaseResultMap" type="com.pan.pmall.entity.ProductComment">
+        <id property="commId" column="comm_id" jdbcType="VARCHAR"/>
+        <result property="productId" column="product_id" jdbcType="VARCHAR"/>
+        <result property="productName" column="product_name" jdbcType="VARCHAR"/>
+        <result property="orderItemId" column="order_item_id" jdbcType="VARCHAR"/>
+        <result property="userId" column="user_id" jdbcType="VARCHAR"/>
+        <result property="isAnonymous" column="is_anonymous" jdbcType="INTEGER"/>
+        <result property="commType" column="comm_type" jdbcType="INTEGER"/>
+        <result property="commLevel" column="comm_level" jdbcType="INTEGER"/>
+        <result property="commContent" column="comm_content" jdbcType="VARCHAR"/>
+        <result property="commImgs" column="comm_imgs" jdbcType="VARCHAR"/>
+        <result property="sepcName" column="sepc_name" jdbcType="TIMESTAMP"/>
+        <result property="replyStatus" column="reply_status" jdbcType="INTEGER"/>
+        <result property="replyContent" column="reply_content" jdbcType="VARCHAR"/>
+        <result property="replyTime" column="reply_time" jdbcType="TIMESTAMP"/>
+        <result property="isShow" column="is_show" jdbcType="INTEGER"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        comm_id,product_id,product_name,
+        order_item_id,user_id,is_anonymous,
+        comm_type,comm_level,comm_content,
+        comm_imgs,sepc_name,reply_status,
+        reply_content,reply_time,is_show
+    </sql>
+
+
+    <resultMap id="CommentVOMap" type="com.pan.pmall.pojo.ProductCommentVo">
+        <id property="commId" column="comm_id" jdbcType="VARCHAR"/>
+        <result property="productId" column="product_id" jdbcType="VARCHAR"/>
+        <result property="productName" column="product_name" jdbcType="VARCHAR"/>
+        <result property="orderItemId" column="order_item_id" jdbcType="VARCHAR"/>
+        <result property="userId" column="user_id" jdbcType="VARCHAR"/>
+        <result property="isAnonymous" column="is_anonymous" jdbcType="INTEGER"/>
+        <result property="commType" column="comm_type" jdbcType="INTEGER"/>
+        <result property="commLevel" column="comm_level" jdbcType="INTEGER"/>
+        <result property="commContent" column="comm_content" jdbcType="VARCHAR"/>
+        <result property="commImgs" column="comm_imgs" jdbcType="VARCHAR"/>
+        <result property="sepcName" column="sepc_name" jdbcType="TIMESTAMP"/>
+        <result property="replyStatus" column="reply_status" jdbcType="INTEGER"/>
+        <result property="replyContent" column="reply_content" jdbcType="VARCHAR"/>
+        <result property="replyTime" column="reply_time" jdbcType="TIMESTAMP"/>
+        <result property="isShow" column="is_show" jdbcType="INTEGER"/>
+        <result property="username" column="username" jdbcType="VARCHAR"/>
+        <result property="nickname" column="nickname" jdbcType="VARCHAR"/>
+        <result property="userImg" column="user_img" jdbcType="VARCHAR"/>
+        <result property="orderItemSkuName" column="sku_name" jdbcType="VARCHAR"/>
+        <result property="orderItemSkuImg" column="sku_img" jdbcType="VARCHAR"/>
+        <result property="orderItemSkuAttr" column="sku_attr" jdbcType="VARCHAR"/>
+    </resultMap>
+
+    <select id="selectCommentsByProductId" resultMap="CommentVOMap">
+        select c.comm_id,
+        c.product_id,
+        c.product_name,
+        c.order_item_id,
+        c.user_id,
+        c.is_anonymous,
+        c.comm_type,
+        c.comm_level,
+        c.comm_content,
+        c.comm_imgs,
+        c.sepc_name,
+        c.reply_status,
+        c.reply_content,
+        c.reply_time,
+        c.is_show,
+        u.username,
+        u.nickname,
+        u.user_img,
+        i.sku_name,
+        i.sku_img,
+        i.sku_attr
+        from product_comments c
+        left join users u on c.user_id = u.user_id
+        left join order_item i on c.order_item_id = i.item_id
+        where c.product_id = #{productId}
+        and c.is_show = 1
+        <if test="query != ''">
+            and c.comm_type = #{query}
+        </if>
+    </select>
+
+    <!--自定义分页查询-->
+    <select id="selectCommentPageByProductId" resultMap="CommentVOMap">
+        select c.comm_id,
+               c.product_id,
+               c.product_name,
+               c.order_item_id,
+               c.user_id,
+               c.is_anonymous,
+               c.comm_type,
+               c.comm_level,
+               c.comm_content,
+               c.comm_imgs,
+               c.sepc_name,
+               c.reply_status,
+               c.reply_content,
+               c.reply_time,
+               c.is_show,
+               u.username,
+               u.nickname,
+               u.user_img,
+               i.sku_name,
+               i.sku_img,
+               i.sku_attr
+        from product_comments c
+                 left join users u on c.user_id = u.user_id
+                 left join order_item i on c.order_item_id = i.item_id
+        where c.product_id = #{productId}
+          and c.is_show = 1
+        limit #{start}, #{pagesize}
+    </select>
+</mapper>

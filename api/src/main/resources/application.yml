@@ -1,0 +1,51 @@
+#配置工程访问地址
+server:
+  servlet:
+    #指定工程的访问路径
+    context-path: /pmall
+  #指定工程的访问端口
+  port: 9999
+
+#spring相关配置
+spring:
+  application:
+    #应用名
+    name: pmall
+
+  #数据源相关配置
+  datasource:
+    #druid数据源信息配置
+    druid:
+      driver-class-name: com.mysql.jdbc.Driver
+      url: jdbc:mysql://localhost:3306/pmall?characterEncoding=utf-8&serverTimezone=UTC
+      username: root
+      #      password: Pjh_2905231006
+      password: root
+      #连接池中的初始化连接数量
+      initial-size: 1
+      #最小空闲连接数, 当创建了很多连接, 释放了一部分后留下来的连接数
+      min-idle: 3
+      #最大连接数
+      max-active: 20
+      #获取连接时最大等待时间，单位毫秒
+      max-wait: 30000
+
+#mybatis-plus配置
+mybatis-plus:
+  #指定mybatis-plus的Mapper文件
+  mapper-locations: classpath:mapper/*Mapper.xml
+  #mybatis-plus具体配置
+  configuration:
+    #驼峰命名转换
+    map-underscore-to-camel-case: true
+    #打印mybatis-plus的执行的sql信息
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+  #指定Mybatis的实体类目录
+  type-aliases-package: com.pan.pmall.bean
+
+pagehelper:
+  #开启后 如果 pageSize=0 或者 RowBounds.limit = 0 就会查询出全部的结果
+  page-size-zero: true
+  #分页合理性配置
+  #如果 pageNum <= 0 会查询第一页，如果 pageNum > pages 会查询最后一页。
+  reasonable: true

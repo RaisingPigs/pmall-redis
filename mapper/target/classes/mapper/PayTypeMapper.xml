@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.pan.pmall.dao.PayTypeMapper">
+
+    <resultMap id="BaseResultMap" type="com.pan.pmall.entity.PayType">
+            <id property="payId" column="pay_id" jdbcType="VARCHAR"/>
+            <result property="payType" column="pay_type" jdbcType="INTEGER"/>
+            <result property="payName" column="pay_name" jdbcType="VARCHAR"/>
+            <result property="payLogo" column="pay_logo" jdbcType="VARCHAR"/>
+            <result property="payQrcodeImg" column="pay_qrcode_img" jdbcType="VARCHAR"/>
+            <result property="createTime" column="create_time" jdbcType="TIMESTAMP"/>
+            <result property="updateTime" column="update_time" jdbcType="TIMESTAMP"/>
+            <result property="status" column="status" jdbcType="INTEGER"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        pay_id,pay_type,pay_name,pay_logo
+        pay_qrcode_img,create_time,update_time, status
+    </sql>
+</mapper>

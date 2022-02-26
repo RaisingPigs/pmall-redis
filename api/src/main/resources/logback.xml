@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+    <!--控制台打印的日志-->
+    <appender name="stdout" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <!--日志的打印格式-->
+            <springProfile name="dev">
+                <pattern>%d{yyyy-MM-dd-HH:mm:ss E} %level [%thread]-%class[%line]: %msg%n</pattern>
+            </springProfile>
+            <springProfile name="!dev">
+                <pattern>%d{yyyy-MM-dd-HH:mm:ss E} %level [%thread]-%class[%line]: %msg%n</pattern>
+            </springProfile>
+            <!--日志的编码格式-->
+            <charset>UTF-8</charset>
+        </encoder>
+    </appender>
+
+    <!--每天产生一个配置文件,路径为 项目名/log/log-yyyy-MM-dd.log -->
+    <appender name="timeFile" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <!--TimeBasedRollingPolicy  基于时间的滚动策略-->
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>log/log-%d{yyyy-MM-dd}.log</fileNamePattern>
+        </rollingPolicy>
+        <!--日志文件的格式-->
+        <encoder>
+            <pattern>%d{yyyy-MM-dd-HH:mm:ss.SSS} %level [%thread]-%class:%line>>%msg%n</pattern>
+            <charset>UTF-8</charset>
+        </encoder>
+    </appender>
+
+    <!--使用哪条日志配置-->
+    <root level="info">
+        <appender-ref ref="stdout"/>
+        <appender-ref ref="timeFile"/>
+    </root>
+</configuration>

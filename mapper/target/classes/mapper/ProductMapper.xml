@@ -1,0 +1,254 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.pan.pmall.dao.ProductMapper">
+
+    <resultMap id="BaseResultMap" type="com.pan.pmall.entity.Product">
+        <id property="productId" column="product_id" jdbcType="VARCHAR"/>
+        <result property="productName" column="product_name" jdbcType="VARCHAR"/>
+        <result property="categoryId" column="category_id" jdbcType="VARCHAR"/>
+        <result property="rootCategoryId" column="root_category_id" jdbcType="VARCHAR"/>
+        <result property="soldNum" column="sold_num" jdbcType="INTEGER"/>
+        <result property="productStatus" column="product_status" jdbcType="INTEGER"/>
+        <result property="content" column="content" jdbcType="VARCHAR"/>
+        <result property="createTime" column="create_time" jdbcType="TIMESTAMP"/>
+        <result property="updateTime" column="update_time" jdbcType="TIMESTAMP"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        product_id,product_name,category_id,
+        root_category_id,sold_num,product_status,
+        content,create_time,update_time
+    </sql>
+
+    <resultMap id="ProductWithImgMap" type="com.pan.pmall.pojo.ProductVo">
+        <id property="productId" column="product_id" jdbcType="VARCHAR"/>
+        <result property="productName" column="product_name" jdbcType="VARCHAR"/>
+        <result property="categoryId" column="category_id" jdbcType="VARCHAR"/>
+        <result property="rootCategoryId" column="root_category_id" jdbcType="VARCHAR"/>
+        <result property="soldNum" column="sold_num" jdbcType="INTEGER"/>
+        <result property="productStatus" column="product_status" jdbcType="INTEGER"/>
+        <result property="content" column="content" jdbcType="VARCHAR"/>
+        <result property="createTime" column="create_time" jdbcType="TIMESTAMP"/>
+        <result property="updateTime" column="update_time" jdbcType="TIMESTAMP"/>
+
+        <!--注意: 此处的select要写全类名.方法名-->
+        <collection property="productImgs"
+                    select="com.pan.pmall.dao.ProductImgMapper.selectImgsByProductId"
+                    column="product_id"/>
+    </resultMap>
+
+    <select id="selectProductsWithImgsByCreateTime" resultMap="ProductWithImgMap">
+        select
+        <include refid="Base_Column_List"/>
+        from product
+        where product_status = 1
+        order by create_time desc
+        limit #{start}, #{num}
+    </select>
+
+    <select id="selectProductsWithImgsByCategoryId" resultMap="ProductWithImgMap">
+        select
+        <include refid="Base_Column_List"/>
+        from product
+        where product_status = 1 and root_category_id = #{categoryId}
+        order by sold_num desc
+        limit #{start}, #{num}
+    </select>
+
+
+    <resultMap id="ProductsWithImgsAndSkusMap" type="com.pan.pmall.pojo.ProductVo">
+        <id property="productId" column="product_id" jdbcType="VARCHAR"/>
+        <result property="productName" column="product_name" jdbcType="VARCHAR"/>
+        <result property="categoryId" column="category_id" jdbcType="VARCHAR"/>
+        <result property="rootCategoryId" column="root_category_id" jdbcType="VARCHAR"/>
+        <result property="soldNum" column="p_sold_num" jdbcType="INTEGER"/>
+        <result property="productStatus" column="product_status" jdbcType="INTEGER"/>
+        <result property="content" column="content" jdbcType="VARCHAR"/>
+        <result property="createTime" column="create_time" jdbcType="TIMESTAMP"/>
+        <result property="updateTime" column="update_time" jdbcType="TIMESTAMP"/>
+
+        <collection property="productImgs" ofType="com.pan.pmall.entity.ProductImg">
+            <id property="id" column="id" jdbcType="VARCHAR"/>
+            <result property="itemId" column="item_id" jdbcType="VARCHAR"/>
+            <result property="url" column="url" jdbcType="VARCHAR"/>
+            <result property="sort" column="sort" jdbcType="INTEGER"/>
+            <result property="isMain" column="is_main" jdbcType="INTEGER"/>
+        </collection>
+        <collection property="productSkus" ofType="com.pan.pmall.entity.ProductSku">
+            <id property="skuId" column="sku_id" jdbcType="VARCHAR"/>
+            <result property="productId" column="product_id" jdbcType="VARCHAR"/>
+            <result property="skuName" column="sku_name" jdbcType="VARCHAR"/>
+            <result property="skuImg" column="sku_img" jdbcType="VARCHAR"/>
+            <result property="untitled" column="untitled" jdbcType="VARCHAR"/>
+            <result property="originalPrice" column="original_price" jdbcType="INTEGER"/>
+            <result property="sellPrice" column="min_sell_price" jdbcType="INTEGER"/>
+            <result property="discounts" column="discounts" jdbcType="DECIMAL"/>
+            <result property="stock" column="stock" jdbcType="INTEGER"/>
+            <result property="status" column="status" jdbcType="INTEGER"/>
+        </collection>
+        <collection property="productParams" ofType="com.pan.pmall.entity.ProductParam">
+            <id property="paramId" column="param_id" jdbcType="VARCHAR"/>
+            <result property="productId" column="product_id" jdbcType="VARCHAR"/>
+            <result property="productPlace" column="product_place" jdbcType="VARCHAR"/>
+            <result property="footPeriod" column="foot_period" jdbcType="VARCHAR"/>
+            <result property="brand" column="brand" jdbcType="VARCHAR"/>
+            <result property="factoryName" column="factory_name" jdbcType="VARCHAR"/>
+            <result property="factoryAddress" column="factory_address" jdbcType="VARCHAR"/>
+            <result property="packagingMethod" column="packaging_method" jdbcType="VARCHAR"/>
+            <result property="weight" column="weight" jdbcType="VARCHAR"/>
+            <result property="storageMethod" column="storage_method" jdbcType="VARCHAR"/>
+            <result property="eatMethod" column="eat_method" jdbcType="VARCHAR"/>
+        </collection>
+    </resultMap>
+
+    <select id="selectProductsWithImgsAndSkusByCategoryId" resultMap="ProductsWithImgsAndSkusMap">
+        select
+        p.product_id,
+        p.product_name,
+        p.category_id,
+        p.root_category_id,
+        p.sold_num p_sold_num,
+        p.product_status,
+        p.content,
+        p.create_time,
+        p.update_time,
+        pi.id,
+        pi.item_id,
+        pi.url,
+        pi.sort,
+        pi.is_main,
+        ps.sku_id,
+        ps.sku_name,
+        ps.sku_img,
+        ps.untitled,
+        ps.original_price,
+        min(ps.sell_price) min_sell_price,
+        ps.discounts,
+        ps.stock,
+        ps.status,
+        pp.param_id,
+        pp.product_place,
+        pp.foot_period,
+        pp.brand,
+        pp.factory_name,
+        pp.factory_address,
+        pp.packaging_method,
+        pp.weight,
+        pp.storage_method,
+        pp.eat_method
+        from product p
+        left join product_img pi on p.product_id = pi.item_id
+        left join product_sku ps on p.product_id = ps.product_id
+        left join product_params pp on p.product_id = pp.product_id
+        where p.category_id = #{categoryId}
+        and pi.is_main = 1
+        and p.product_status = 1
+        and ps.status = 1
+        <if test="query != null and query != ''">
+            and pp.brand = #{query}
+        </if>
+        group by p.product_id
+        <if test="orderByCol == 'min_sell_price' and seq == 'asc'">
+            order by min_sell_price
+        </if>
+        <if test="orderByCol == 'min_sell_price' and seq == 'desc'">
+            order by min_sell_price desc
+        </if>
+        <if test="orderByCol == 'p_sold_num' and seq == 'asc'">
+            order by p_sold_num
+        </if>
+        <if test="orderByCol == 'p_sold_num' and seq == 'desc'">
+            order by p_sold_num desc
+        </if>
+    </select>
+
+
+    <select id="selectBrandsByCategoryId" resultType="java.lang.String">
+        select distinct brand
+        from product p
+                 left join product_params pp on p.product_id = pp.product_id
+        where category_id = #{categoryId}
+    </select>
+
+
+    <select id="selectProductsWithImgsAndSkusLikeProductName" resultMap="ProductsWithImgsAndSkusMap">
+        select
+        p.product_id,
+        p.product_name,
+        p.category_id,
+        p.root_category_id,
+        p.sold_num p_sold_num,
+        p.product_status,
+        p.content,
+        p.create_time,
+        p.update_time,
+        pi.id,
+        pi.item_id,
+        pi.url,
+        pi.sort,
+        pi.is_main,
+        ps.sku_id,
+        ps.sku_name,
+        ps.sku_img,
+        ps.untitled,
+        ps.original_price,
+        min(ps.sell_price) min_sell_price,
+        ps.discounts,
+        ps.stock,
+        ps.status,
+        pp.param_id,
+        pp.product_place,
+        pp.foot_period,
+        pp.brand,
+        pp.factory_name,
+        pp.factory_address,
+        pp.packaging_method,
+        pp.weight,
+        pp.storage_method,
+        pp.eat_method
+        from product p
+        left join product_img pi on p.product_id = pi.item_id
+        left join product_sku ps on p.product_id = ps.product_id
+        left join product_params pp on p.product_id = pp.product_id
+        <where>
+            <if test="query !=null and query != ''">
+                and p.product_name like concat('%', #{query}, '%')
+            </if>
+            <if test="categoryId != null and categoryId != ''">
+                and p.category_id = #{categoryId}
+            </if>
+            <if test="brand != null and brand != ''">
+                and pp.brand = #{brand}
+            </if>
+            and pi.is_main = 1
+            and p.product_status = 1
+            and ps.status = 1
+        </where>
+        group by p.product_id
+        <if test="orderByCol == 'min_sell_price' and seq == 'asc'">
+            order by min_sell_price
+        </if>
+        <if test="orderByCol == 'min_sell_price' and seq == 'desc'">
+            order by min_sell_price desc
+        </if>
+        <if test="orderByCol == 'p_sold_num' and seq == 'asc'">
+            order by p_sold_num
+        </if>
+        <if test="orderByCol == 'p_sold_num' and seq == 'desc'">
+            order by p_sold_num desc
+        </if>
+    </select>
+
+    <select id="selectBrandsLikeProductName" resultType="java.lang.String">
+        select distinct brand
+        from product_params
+        where product_id in
+              (select product_id
+               from product
+               where product_name like concat('%', #{query}, '%'))
+    </select>
+
+
+</mapper>

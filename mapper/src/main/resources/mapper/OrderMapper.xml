@@ -1,0 +1,166 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.pan.pmall.dao.OrderMapper">
+
+    <resultMap id="BaseResultMap" type="com.pan.pmall.entity.Order">
+        <id property="orderId" column="order_id" jdbcType="VARCHAR"/>
+        <result property="userId" column="user_id" jdbcType="VARCHAR"/>
+        <result property="untitled" column="untitled" jdbcType="VARCHAR"/>
+        <result property="receiverName" column="receiver_name" jdbcType="VARCHAR"/>
+        <result property="receiverMobile" column="receiver_mobile" jdbcType="VARCHAR"/>
+        <result property="receiverAddress" column="receiver_address" jdbcType="VARCHAR"/>
+        <result property="totalAmount" column="total_amount" jdbcType="DECIMAL"/>
+        <result property="actualAmount" column="actual_amount" jdbcType="DECIMAL"/>
+        <result property="payType" column="pay_type" jdbcType="INTEGER"/>
+        <result property="orderRemark" column="order_remark" jdbcType="VARCHAR"/>
+        <result property="status" column="status" jdbcType="INTEGER"/>
+        <result property="deliveryType" column="delivery_type" jdbcType="VARCHAR"/>
+        <result property="deliveryFlowId" column="delivery_flow_id" jdbcType="VARCHAR"/>
+        <result property="orderFreight" column="order_freight" jdbcType="DECIMAL"/>
+        <result property="deleteStatus" column="delete_status" jdbcType="INTEGER"/>
+        <result property="createTime" column="create_time" jdbcType="TIMESTAMP"/>
+        <result property="updateTime" column="update_time" jdbcType="TIMESTAMP"/>
+        <result property="payTime" column="pay_time" jdbcType="TIMESTAMP"/>
+        <result property="deliveryTime" column="delivery_time" jdbcType="TIMESTAMP"/>
+        <result property="flishTime" column="flish_time" jdbcType="TIMESTAMP"/>
+        <result property="cancelTime" column="cancel_time" jdbcType="TIMESTAMP"/>
+        <result property="closeType" column="close_type" jdbcType="INTEGER"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        order_id,user_id,untitled,
+        receiver_name,receiver_mobile,receiver_address,
+        total_amount,actual_amount,pay_type,
+        order_remark,status,delivery_type,
+        delivery_flow_id,order_freight,delete_status,
+        create_time,update_time,pay_time,
+        delivery_time,flish_time,cancel_time,
+        close_type
+    </sql>
+
+    <resultMap id="OrderVoMap" type="com.pan.pmall.pojo.OrderVo">
+        <id property="orderId" column="order_id" jdbcType="VARCHAR"/>
+        <result property="userId" column="user_id" jdbcType="VARCHAR"/>
+        <result property="untitled" column="untitled" jdbcType="VARCHAR"/>
+        <result property="receiverName" column="receiver_name" jdbcType="VARCHAR"/>
+        <result property="receiverMobile" column="receiver_mobile" jdbcType="VARCHAR"/>
+        <result property="receiverAddress" column="receiver_address" jdbcType="VARCHAR"/>
+        <result property="totalAmount" column="total_amount" jdbcType="DECIMAL"/>
+        <result property="actualAmount" column="actual_amount" jdbcType="DECIMAL"/>
+        <result property="payType" column="pay_type" jdbcType="INTEGER"/>
+        <result property="orderRemark" column="order_remark" jdbcType="VARCHAR"/>
+        <result property="status" column="status" jdbcType="INTEGER"/>
+        <result property="deliveryType" column="delivery_type" jdbcType="VARCHAR"/>
+        <result property="deliveryFlowId" column="delivery_flow_id" jdbcType="VARCHAR"/>
+        <result property="orderFreight" column="order_freight" jdbcType="DECIMAL"/>
+        <result property="deleteStatus" column="delete_status" jdbcType="INTEGER"/>
+        <result property="createTime" column="create_time" jdbcType="TIMESTAMP"/>
+        <result property="updateTime" column="update_time" jdbcType="TIMESTAMP"/>
+        <result property="payTime" column="pay_time" jdbcType="TIMESTAMP"/>
+        <result property="deliveryTime" column="delivery_time" jdbcType="TIMESTAMP"/>
+        <result property="flishTime" column="flish_time" jdbcType="TIMESTAMP"/>
+        <result property="cancelTime" column="cancel_time" jdbcType="TIMESTAMP"/>
+        <result property="closeType" column="close_type" jdbcType="INTEGER"/>
+        <result property="payQrcodeImg" column="pay_qrcode_img" jdbcType="VARCHAR"/>
+    </resultMap>
+
+    <select id="selectOrderVoByOrderId" resultMap="OrderVoMap">
+        select o.order_id,
+               o.user_id,
+               o.untitled,
+               o.receiver_name,
+               o.receiver_mobile,
+               o.receiver_address,
+               o.total_amount,
+               o.actual_amount,
+               o.pay_type,
+               o.order_remark,
+               o.status,
+               o.delivery_type,
+               o.delivery_flow_id,
+               o.order_freight,
+               o.delete_status,
+               o.create_time,
+               o.update_time,
+               o.pay_time,
+               o.delivery_time,
+               o.flish_time,
+               o.cancel_time,
+               o.close_type,
+               pt.pay_qrcode_img
+        from orders o
+                 left join pay_type pt on o.pay_type = pt.pay_type
+        where o.order_id = #{orderId}
+    </select>
+
+
+    <resultMap id="OrderVoWithItemsMap" type="com.pan.pmall.pojo.OrderVo">
+        <id property="orderId" column="order_id" jdbcType="VARCHAR"/>
+        <result property="userId" column="user_id" jdbcType="VARCHAR"/>
+        <result property="untitled" column="untitled" jdbcType="VARCHAR"/>
+        <result property="receiverName" column="receiver_name" jdbcType="VARCHAR"/>
+        <result property="receiverMobile" column="receiver_mobile" jdbcType="VARCHAR"/>
+        <result property="receiverAddress" column="receiver_address" jdbcType="VARCHAR"/>
+        <result property="totalAmount" column="total_amount" jdbcType="DECIMAL"/>
+        <result property="actualAmount" column="actual_amount" jdbcType="DECIMAL"/>
+        <result property="payType" column="pay_type" jdbcType="INTEGER"/>
+        <result property="orderRemark" column="order_remark" jdbcType="VARCHAR"/>
+        <result property="status" column="status" jdbcType="INTEGER"/>
+        <result property="deliveryType" column="delivery_type" jdbcType="VARCHAR"/>
+        <result property="deliveryFlowId" column="delivery_flow_id" jdbcType="VARCHAR"/>
+        <result property="orderFreight" column="order_freight" jdbcType="DECIMAL"/>
+        <result property="deleteStatus" column="delete_status" jdbcType="INTEGER"/>
+        <result property="createTime" column="create_time" jdbcType="TIMESTAMP"/>
+        <result property="updateTime" column="update_time" jdbcType="TIMESTAMP"/>
+        <result property="payTime" column="pay_time" jdbcType="TIMESTAMP"/>
+        <result property="deliveryTime" column="delivery_time" jdbcType="TIMESTAMP"/>
+        <result property="flishTime" column="flish_time" jdbcType="TIMESTAMP"/>
+        <result property="cancelTime" column="cancel_time" jdbcType="TIMESTAMP"/>
+        <result property="closeType" column="close_type" jdbcType="INTEGER"/>
+        <result property="payQrcodeImg" column="pay_qrcode_img" jdbcType="VARCHAR"/>
+
+        <collection property="orderItems" select="com.pan.pmall.dao.OrderItemMapper.selectOrderItemsByOrderId"
+                    column="order_id"/>
+    </resultMap>
+
+    <select id="selectOrdersWithItemByUserIdAndStatus" resultMap="OrderVoWithItemsMap">
+        select
+        order_id,
+        user_id,
+        untitled,
+        receiver_name,
+        receiver_mobile,
+        receiver_address,
+        total_amount,
+        actual_amount,
+        pay_type,
+        order_remark,
+        status,
+        delivery_type,
+        delivery_flow_id,
+        order_freight,
+        delete_status,
+        create_time,
+        update_time,
+        pay_time,
+        delivery_time,
+        flish_time,
+        cancel_time,
+        close_type
+        from orders
+        <where>
+            <if test="userId != null and userId != ''">
+                and user_id = #{userId}
+            </if>
+            <if test="status != null and status != ''">
+                and status = #{status}
+            </if>
+            and delete_status = 0
+        </where>
+        order by create_time desc
+    </select>
+
+
+</mapper>

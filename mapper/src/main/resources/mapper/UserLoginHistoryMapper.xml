@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.pan.pmall.dao.UserLoginHistoryMapper">
+
+    <resultMap id="BaseResultMap" type="com.pan.pmall.entity.UserLoginHistory">
+            <id property="histId" column="hist_id" jdbcType="VARCHAR"/>
+            <result property="histArea" column="hist_area" jdbcType="VARCHAR"/>
+            <result property="histCountry" column="hist_country" jdbcType="VARCHAR"/>
+            <result property="userId" column="user_id" jdbcType="VARCHAR"/>
+            <result property="ip" column="ip" jdbcType="VARCHAR"/>
+            <result property="loginTime" column="LOGIN_TIME" jdbcType="VARCHAR"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        hist_id,hist_area,hist_country,
+        user_id,ip,LOGIN_TIME
+    </sql>
+    
+    
+</mapper>

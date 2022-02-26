@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.pan.pmall.dao.ShoppingCartMapper">
+
+    <resultMap id="BaseResultMap" type="com.pan.pmall.entity.ShoppingCart">
+        <id property="cartId" column="cart_id" jdbcType="VARCHAR"/>
+        <result property="productId" column="product_id" jdbcType="VARCHAR"/>
+        <result property="skuId" column="sku_id" jdbcType="VARCHAR"/>
+        <result property="skuAttr" column="sku_attr" jdbcType="VARCHAR"/>
+        <result property="userId" column="user_id" jdbcType="VARCHAR"/>
+        <result property="cartNum" column="cart_num" jdbcType="INTEGER"/>
+        <result property="createTime" column="create_time" jdbcType="TIMESTAMP"/>
+        <result property="updateTime" column="update_time" jdbcType="TIMESTAMP"/>
+        <result property="status" column="status" jdbcType="INTEGER"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        cart_id,
+        product_id,
+        sku_id,
+        sku_attr,
+        user_id,
+        cart_num,
+        create_time,
+        update_time,
+        status
+    </sql>
+
+    <resultMap id="ShoppingCartVOMap" type="com.pan.pmall.pojo.ShoppingCartVo">
+        <id property="cartId" column="cart_id" jdbcType="VARCHAR"/>
+        <result property="productId" column="product_id" jdbcType="VARCHAR"/>
+        <result property="skuId" column="sku_id" jdbcType="VARCHAR"/>
+        <result property="skuAttr" column="sku_attr" jdbcType="VARCHAR"/>
+        <result property="userId" column="user_id" jdbcType="VARCHAR"/>
+        <result property="cartNum" column="cart_num" jdbcType="VARCHAR"/>
+        <result property="createTime" column="create_time" jdbcType="TIMESTAMP"/>
+        <result property="updateTime" column="update_time" jdbcType="TIMESTAMP"/>
+        <result property="status" column="status" jdbcType="INTEGER"/>
+
+        <result property="productName" column="product_name" jdbcType="VARCHAR"/>
+        <result property="skuName" column="sku_name" jdbcType="VARCHAR"/>
+        <result property="skuImg" column="sku_img" jdbcType="VARCHAR"/>
+        <result property="stock" column="stock" jdbcType="INTEGER"/>
+        <result property="originalPrice" column="original_price" jdbcType="DECIMAL"/>
+        <result property="sellPrice" column="sell_price" jdbcType="DECIMAL"/>
+        <result property="discounts" column="discounts" jdbcType="DECIMAL"/>
+    </resultMap>
+
+    <select id="selectShoppingCartVOByUserId" resultMap="ShoppingCartVOMap">
+        select sc.cart_id,
+               sc.product_id,
+               sc.sku_id,
+               sc.sku_attr,
+               sc.user_id,
+               sc.cart_num,
+               sc.create_time,
+               sc.update_time,
+               sc.status,
+               p.product_name,
+               ps.sku_name,
+               ps.sku_img,
+               ps.stock,
+               ps.original_price,
+               ps.sell_price,
+               ps.discounts
+        from shopping_cart sc
+                 left join product p on sc.product_id = p.product_id
+                 left join product_sku ps on sc.sku_id = ps.sku_id
+        where sc.user_id = #{userId}
+          and (sc.status = 1 or sc.status = -1)
+    </select>
+
+    <select id="selectShoppingCartVOByCartIdList" resultMap="ShoppingCartVOMap">
+        select sc.cart_id,
+        sc.product_id,
+        sc.sku_id,
+        sc.sku_attr,
+        sc.user_id,
+        sc.cart_num,
+        sc.create_time,
+        sc.update_time,
+        sc.status,
+        p.product_name,
+        ps.sku_name,
+        ps.sku_img,
+        ps.stock,
+        ps.original_price,
+        ps.sell_price,
+        ps.discounts
+        from shopping_cart sc
+        left join product p on sc.product_id = p.product_id
+        left join product_sku ps on sc.sku_id = ps.sku_id
+        <where>
+            <foreach collection="cartIds"
+                     item="id"
+                     open="sc.cart_id in (" close=")"
+                     separator=",">
+                #{id}
+            </foreach>
+        </where>
+        and (sc.status = 1 or sc.status = -1)
+    </select>
+
+</mapper>

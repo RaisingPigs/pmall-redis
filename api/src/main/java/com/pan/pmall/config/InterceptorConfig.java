@@ -1,9 +1,13 @@
 package com.pan.pmall.config;
 
 import com.pan.pmall.interceptor.CheckTokenInterceptor;
+import com.pan.pmall.interceptor.KeepSessionStateInterceptor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
+
+import javax.annotation.Resource;
 
 /**
  * @description:
@@ -12,9 +16,18 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
  **/
 @Configuration
 public class InterceptorConfig implements WebMvcConfigurer {
+    @Resource
+    private CheckTokenInterceptor checkTokenInterceptor;
+    @Resource
+    private KeepSessionStateInterceptor keepSessionStateInterceptor;
+
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
-        registry.addInterceptor(new CheckTokenInterceptor())
+        /*拦截器的生效顺序就是注册的顺序*/
+        registry.addInterceptor(keepSessionStateInterceptor)
+                .addPathPatterns("/**");
+
+        registry.addInterceptor(checkTokenInterceptor)
                 .addPathPatterns("/**")
                 .excludePathPatterns("/user/**")
                 .excludePathPatterns("/index/**")

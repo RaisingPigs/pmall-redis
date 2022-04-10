@@ -1,6 +1,7 @@
 package com.pan.pmall.service;
 
 import com.pan.pmall.entity.ShoppingCart;
+import com.pan.pmall.pojo.ShoppingCartVo;
 import com.pan.pmall.vo.ResultVo;
 
 import java.util.List;
@@ -19,5 +20,5 @@ public interface ShoppingCartService {
 
     ResultVo deleteShoppingCartById(String cartId);
 
-    ResultVo listShoppingCartByCartIdList(List<String> cartIds);
+    List<ShoppingCartVo> listShoppingCartByCartIdList(List<String> cartIds);
 }

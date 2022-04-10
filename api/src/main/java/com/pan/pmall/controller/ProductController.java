@@ -8,6 +8,7 @@ import com.pan.pmall.utils.QueryInfo;
 import com.pan.pmall.vo.ResultVo;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
@@ -17,6 +18,7 @@ import javax.annotation.Resource;
  * @author: Mr.Pan
  * @create: 2022-02-09 12:21
  **/
+@Slf4j
 @CrossOrigin
 @RestController
 @RequestMapping("/product")
@@ -32,7 +34,12 @@ public class ProductController {
     @ApiOperation("商品信息获取接口")
     @GetMapping("/info/{id}")
     public ResultVo getProductInfo(@PathVariable("id") String id) {
-        return productService.getProductInfoById(id);
+        try {
+            return productService.getProductInfoById(id);
+        } catch (Exception e) {
+            log.error("", e);
+            return ResultVo.failed("获取商品信息失败");
+        }
     }
 
     @ApiOperation("商品参数获取接口")

@@ -3,6 +3,7 @@ package com.pan.pmall.dao;
 import com.pan.pmall.entity.ProductImg;
 import com.pan.pmall.entity.ProductSku;
 import com.pan.pmall.pojo.ProductVo;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
@@ -109,6 +110,7 @@ public class ProductMapperTest {
     }
 
     @Test
+    @Disabled
     void testSelectProductsWithImgsAndSkusByCategoryId() {
         List<ProductVo> productVos = productMapper.selectProductsWithImgsAndSkusByCategoryId("77", "", "min_sell_price", "desc");
 

@@ -1,6 +1,8 @@
 package com.pan.pmall.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.pan.pmall.dao.UserMapper;
 import com.pan.pmall.entity.User;
 import com.pan.pmall.service.UserService;
@@ -9,6 +11,7 @@ import com.pan.pmall.vo.ResultVo;
 import io.jsonwebtoken.JwtBuilder;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
+import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -17,6 +20,7 @@ import javax.annotation.Resource;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 /**
  * @description:
@@ -29,6 +33,10 @@ import java.util.Map;
 public class UserServiceImpl implements UserService {
     @Resource
     private UserMapper userMapper;
+    @Resource
+    private StringRedisTemplate stringRedisTemplate;
+    @Resource
+    private ObjectMapper objectMapper;
 
     @Override
     @Transactional
@@ -64,8 +72,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @Transactional(propagation = Propagation.SUPPORTS)
-    public ResultVo checkLogin(String username, String password) {
-        int i = 1 / 0;
+    public ResultVo checkLogin(String username, String password) throws Exception {
         QueryWrapper<User> wrapper = new QueryWrapper<>();
         wrapper.lambda().eq(User::getUsername, username);
         User user = userMapper.selectOne(wrapper);
@@ -94,9 +101,10 @@ public class UserServiceImpl implements UserService {
                         .setIssuedAt(new Date())
                         .setId(user.getUserId().toString())
                         .setClaims(map)
-                        .setExpiration(new Date(System.currentTimeMillis() + 24 * 60 * 60 * 1000))
                         .signWith(SignatureAlgorithm.HS256, "pandemo")
                         .compact();
+
+                stringRedisTemplate.boundValueOps(token).set(objectMapper.writeValueAsString(user), 30, TimeUnit.MINUTES);
 
                 return ResultVo.success("登录成功").add("user", user).add("token", token);
             } else {

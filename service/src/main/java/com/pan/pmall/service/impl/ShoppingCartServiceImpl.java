@@ -101,10 +101,8 @@ public class ShoppingCartServiceImpl implements ShoppingCartService {
 
     @Override
     @Transactional(propagation = Propagation.SUPPORTS)
-    public ResultVo listShoppingCartByCartIdList(List<String> cartIds) {
-        List<ShoppingCartVo> shoppingCarts = shoppingCartMapper.selectShoppingCartVOByCartIdList(cartIds);
-
-        return ResultVo.success().add("shoppingCarts", shoppingCarts);
+    public List<ShoppingCartVo> listShoppingCartByCartIdList(List<String> cartIds) {
+        return shoppingCartMapper.selectShoppingCartVOByCartIdList(cartIds);
     }
 
 }

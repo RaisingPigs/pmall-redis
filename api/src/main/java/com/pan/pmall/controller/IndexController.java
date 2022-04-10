@@ -1,11 +1,13 @@
 package com.pan.pmall.controller;
 
+import com.mysql.jdbc.log.Log;
 import com.pan.pmall.service.CategoryService;
 import com.pan.pmall.service.IndexImgService;
 import com.pan.pmall.service.ProductService;
 import com.pan.pmall.vo.ResultVo;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
@@ -15,6 +17,7 @@ import javax.annotation.Resource;
  * @author: Mr.Pan
  * @create: 2022-02-06 21:34
  **/
+@Slf4j
 @RestController
 @RequestMapping("/index")
 @CrossOrigin
@@ -30,7 +33,12 @@ public class IndexController {
     @GetMapping("/indexImgs")
     @ApiOperation("首页轮播图查询接口")
     public ResultVo getIndexImgs() {
-        return indexImgService.listIndexImgs();
+        try {
+            return indexImgService.listIndexImgs();
+        } catch (Exception e) {
+            log.error("", e);
+            return ResultVo.failed("获取首页轮播图失败");
+        }
     }
 
     @GetMapping("/categories")
@@ -38,10 +46,15 @@ public class IndexController {
     public ResultVo getCategories(@RequestParam(value = "level", required = false) String level,
                                   @RequestParam(value = "id", required = false) String id) {
 
-        if ("2,3".equals(level) && id != null) {
-            return categoryService.listCategoriesWithChildren(id);
-        } else {
-            return categoryService.listCategories(level, id);
+        try {
+            if ("2,3".equals(level) && id != null) {
+                return categoryService.listCategoriesWithChildren(id);
+            } else {
+                return categoryService.listCategories(level, id);
+            }
+        } catch (Exception e) {
+            log.error("", e);
+            return ResultVo.failed("获取分类失败");
         }
     }
 

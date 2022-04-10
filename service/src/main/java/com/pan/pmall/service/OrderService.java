@@ -13,11 +13,11 @@ import java.util.List;
  * @create: 2022-02-15 09:22
  **/
 public interface OrderService {
-    ResultVo addOrder(List<String> cartIds,
+    String addOrder(List<String> cartIds,
                       Integer payType,
                       String userAddrId,
                       String orderRemark,
-                      String userId) throws SQLException;
+                      String userId) throws Exception;
 
     ResultVo getOrder(String orderId);
 

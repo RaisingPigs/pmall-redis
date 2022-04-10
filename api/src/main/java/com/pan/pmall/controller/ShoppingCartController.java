@@ -1,6 +1,7 @@
 package com.pan.pmall.controller;
 
 import com.pan.pmall.entity.ShoppingCart;
+import com.pan.pmall.pojo.ShoppingCartVo;
 import com.pan.pmall.service.ShoppingCartService;
 import com.pan.pmall.vo.ResultVo;
 import io.swagger.annotations.Api;
@@ -61,6 +62,8 @@ public class ShoppingCartController {
         String[] arr = cartIds.split(",");
         List<String> cartIdList = Arrays.asList(arr);
 
-        return shoppingCartService.listShoppingCartByCartIdList(cartIdList);
+        List<ShoppingCartVo> shoppingCarts = shoppingCartService.listShoppingCartByCartIdList(cartIdList);
+
+        return ResultVo.success().add("shoppingCarts", shoppingCarts);
     }
 }

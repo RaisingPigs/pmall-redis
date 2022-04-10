@@ -1,5 +1,6 @@
 package com.pan.pmall.service;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.pan.pmall.utils.QueryInfo;
 import com.pan.pmall.vo.ResultVo;
 
@@ -13,7 +14,7 @@ public interface ProductService {
     ResultVo listRecommendProductsWithImgs(Integer start, Integer num);
 
     /*根据商品id查询商品信息, sku, 图片, 评价数量*/
-    ResultVo getProductInfoById(String id);
+    ResultVo getProductInfoById(String id) throws Exception;
 
     /*根据三级分类id查询商品及图片*/
     ResultVo listProductsPageByCategoryId(String categoryId, QueryInfo queryInfo, String orderByCol, String seq);

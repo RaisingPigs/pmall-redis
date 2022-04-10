@@ -33,7 +33,7 @@ public class UserController {
         try {
             return userService.checkLogin(user.getUsername(), user.getPassword());
         } catch (Exception e) {
-            log.error(e.getMessage());
+            log.error("", e);
             return ResultVo.failed("登录失败");
         }
     }

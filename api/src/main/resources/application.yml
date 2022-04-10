@@ -30,6 +30,21 @@ spring:
       #获取连接时最大等待时间，单位毫秒
       max-wait: 30000
 
+  #redis配置
+  redis:
+    #只需给出主节点即可
+    cluster:
+      nodes: "39.101.137.102:7001, 39.101.137.102:7002, 39.101.137.102:7003"
+    password: Pjh_2905231006     #密码
+    database: 0
+    lettuce:
+      pool:
+        max-active: 1500  #连接池最大连接数  
+        max-wait: 5000  #连接池最大等待阻塞时间
+        max-idle: 500     #连接池中最大空闲连接数
+        min-idle: 100     #连接池中最小空闲数
+    timeout: 60000    #访问超时时间
+
 #mybatis-plus配置
 mybatis-plus:
   #指定mybatis-plus的Mapper文件
@@ -42,6 +57,7 @@ mybatis-plus:
     log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
   #指定Mybatis的实体类目录
   type-aliases-package: com.pan.pmall.bean
+
 
 pagehelper:
   #开启后 如果 pageSize=0 或者 RowBounds.limit = 0 就会查询出全部的结果

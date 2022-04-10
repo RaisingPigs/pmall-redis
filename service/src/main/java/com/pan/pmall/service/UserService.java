@@ -9,5 +9,5 @@ import com.pan.pmall.vo.ResultVo;
  **/
 public interface UserService {
     ResultVo checkRegist(String username, String password);
-    ResultVo checkLogin(String username, String password);
+    ResultVo checkLogin(String username, String password) throws Exception;
 }

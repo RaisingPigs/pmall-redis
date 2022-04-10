@@ -11,21 +11,19 @@ import com.pan.pmall.pojo.ShoppingCartVo;
 import com.pan.pmall.service.OrderService;
 import com.pan.pmall.utils.QueryInfo;
 import com.pan.pmall.vo.ResultVo;
-import com.sun.org.apache.xpath.internal.operations.Bool;
-import com.sun.org.apache.xpath.internal.operations.Or;
+import org.redisson.api.RLock;
+import org.redisson.api.RedissonClient;
+import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.ReactiveTransaction;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
-import javax.imageio.event.IIOWriteProgressListener;
-import javax.xml.stream.FactoryConfigurationError;
 import java.math.BigDecimal;
 import java.sql.SQLException;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
+import java.util.concurrent.TimeUnit;
 
 /**
  * @description:
@@ -46,23 +44,24 @@ public class OrderServiceImpl implements OrderService {
     private ProductSkuMapper productSkuMapper;
     @Resource
     private ProductMapper productMapper;
+    @Resource
+    private StringRedisTemplate stringRedisTemplate;
+   
 
 
     @Override
     @Transactional
-    public ResultVo addOrder(List<String> cartIds,
+    public String addOrder(List<String> cartIds,
                              Integer payType,
                              String userAddrId,
                              String orderRemark,
-                             String userId) throws SQLException {
-
-        /*1. 从数据库查询购物车信息, 并校验库存是否足够*/
-        List<ShoppingCartVo> shoppingCarts = shoppingCartMapper.selectShoppingCartVOByCartIdList(cartIds);
-
-        /*校验库存是否足够*/
+                             String userId) throws Exception {
+        /*1. 校验库存是否足够*/
+        /*这里要重新查询数据库, 因为在第一次查询之后, 加锁之前, 库存有可能被修改*/
+        List<ShoppingCartVo>  shoppingCarts = shoppingCartMapper.selectShoppingCartVOByCartIdList(cartIds);
         for (ShoppingCartVo shoppingCartVO : shoppingCarts) {
             if (shoppingCartVO.getCartNum() > shoppingCartVO.getStock()) {
-                return ResultVo.failed("买的商品太多, 库存不够了");
+                throw new RuntimeException("库存不足");
             }
         }
 
@@ -117,10 +116,6 @@ public class OrderServiceImpl implements OrderService {
 
         int insertRes = orderMapper.insert(order);
 
-        if (insertRes < 0) {
-            return ResultVo.failed("创建订单失败");
-        }
-
         /*5. 将购物车记录转化为订单项, 并将订单项保存数据库*/
         for (ShoppingCartVo shoppingCartVO : shoppingCarts) {
             OrderItem orderItem = new OrderItem();
@@ -142,10 +137,6 @@ public class OrderServiceImpl implements OrderService {
             orderItem.setIsComment(0);
 
             int orderItemInsertRes = orderItemMapper.insert(orderItem);
-
-            if (orderItemInsertRes < 0) {
-                return ResultVo.failed("创建订单项失败");
-            }
 
             /*6. 修改库存*/
             UpdateWrapper<ProductSku> skuUpdateWrapper = new UpdateWrapper<>();
@@ -173,7 +164,7 @@ public class OrderServiceImpl implements OrderService {
             shoppingCartMapper.update(null, cartUpdateWrapper);
         }
 
-        return ResultVo.created("创建订单项成功").add("orderId", order.getOrderId());
+        return order.getOrderId();
     }
 
     @Override
@@ -327,7 +318,7 @@ public class OrderServiceImpl implements OrderService {
                 orderMapper.update(null, orderUpdateWrapper);
             } else {
                 return ResultVo.success();
-            } 
+            }
         }
 
         orderMapper.update(null, orderUpdateWrapper);

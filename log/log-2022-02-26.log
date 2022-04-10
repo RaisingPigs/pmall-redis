@@ -2724,3 +2724,7 @@ Caused by: org.springframework.core.convert.ConverterNotFoundException: No conve
 2022-02-26-14:40:12.205 INFO [main]-springfox.documentation.spring.web.plugins.DocumentationPluginsBootstrapper:163>>Found 1 custom documentation plugin(s)
 2022-02-26-14:40:12.243 INFO [main]-springfox.documentation.spring.web.scanners.ApiListingReferenceScanner:41>>Scanning for api listing references
 2022-02-26-14:40:12.454 INFO [main]-org.springframework.boot.StartupInfoLogger:61>>Started ApiApplication in 4.55 seconds (JVM running for 7.415)
+2022-02-26-14:47:49.578 INFO [SpringContextShutdownHook]-org.springframework.scheduling.concurrent.ExecutorConfigurationSupport:218>>Shutting down ExecutorService 'taskScheduler'
+2022-02-26-14:47:49.579 INFO [SpringContextShutdownHook]-org.springframework.scheduling.concurrent.ExecutorConfigurationSupport:218>>Shutting down ExecutorService 'applicationTaskExecutor'
+2022-02-26-14:47:49.583 INFO [SpringContextShutdownHook]-com.alibaba.druid.pool.DruidDataSource:2071>>{dataSource-1} closing ...
+2022-02-26-14:47:49.586 INFO [SpringContextShutdownHook]-com.alibaba.druid.pool.DruidDataSource:2144>>{dataSource-1} closed
